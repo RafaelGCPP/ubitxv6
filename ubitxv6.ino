@@ -154,7 +154,7 @@ void setup()
     runBfoSetting();
   }
 
-  rootMenu->initMenu();
+  //rootMenu->initMenu();
 }
 
 
@@ -162,6 +162,8 @@ void setup()
  * The loop checks for keydown, ptt, function button and tuning.
  */
 
+#include "toneAC2/toneAC2.h"
+#include "colors.h"
 void loop(){
   if(TuningMode_e::TUNE_CW == globalSettings.tuningMode){
     cwKeyer();
@@ -181,5 +183,57 @@ void loop(){
   Point touch_point;
   ButtonPress_e touch_button = checkTouch(&touch_point);
   int16_t knob = enc_read();
-  runActiveMenu(tuner_button,touch_button,touch_point,knob);
+
+  //runActiveMenu(tuner_button,touch_button,touch_point,knob);
+
+  if(ButtonPress_e::ShortPress == tuner_button){
+    toneAC2(PIN_CW_TONE,440);
+    displayFillrect(0,0,20,20,DISPLAY_WHITE);
+    delay(10);
+  }
+  else if(ButtonPress_e::LongPress == tuner_button){
+    toneAC2(PIN_CW_TONE,880);
+    displayFillrect(0,0,20,20,DISPLAY_RED);
+    delay(10);
+  }
+  else if(ButtonPress_e::ShortPress == touch_button){
+    toneAC2(PIN_CW_TONE,659);
+    displayFillrect(220,0,20,20,DISPLAY_WHITE);
+    delay(10);
+  }
+  else if(ButtonPress_e::LongPress == touch_button){
+    toneAC2(PIN_CW_TONE,1319);
+    displayFillrect(220,0,20,20,DISPLAY_RED);
+    delay(10);
+  }
+  else if(knob > 0){
+    toneAC2(PIN_CW_TONE,100*knob);
+    delay(10);
+  }
+  else if(knob < 0){
+    toneAC2(PIN_CW_TONE,-500*knob);
+    delay(10);
+  }
+  else{
+    noToneAC2();
+    displayFillrect(0,0,20,20,DISPLAY_BLACK);
+    displayFillrect(220,0,20,20,DISPLAY_BLACK);
+  }
+
+  ltoa(knob,b,10);
+  displayText(b,20,40,100,20,DISPLAY_WHITE,DISPLAY_NAVY,DISPLAY_GREEN);
+
+  ltoa(touch_point.x,b,10);
+  char* p = b + strlen(b);
+  *p = ',';
+  ++p;
+  ltoa(touch_point.y,p,10);
+  displayText(b,40,70,200,20,DISPLAY_WHITE,DISPLAY_DARKGREEN,DISPLAY_YELLOW);
+
+  Serial.print(tuner_button);Serial.print(F(","));
+  Serial.print(knob);Serial.print(F(","));
+  Serial.print(touch_button);Serial.print(F(","));
+  Serial.print(touch_point.x);Serial.print(F(","));
+  Serial.println(touch_point.y);
+
 }

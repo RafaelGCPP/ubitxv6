@@ -625,7 +625,7 @@ ButtonStatus_e bsIgnore(){
 }
 
 void osQuickList(){
-  enterSubmenu(quickListMenu);
+  //enterSubmenu(quickListMenu);
 }
 
 void osMenu(){
@@ -633,5 +633,5 @@ void osMenu(){
 }
 
 void osNumpad(){
-  enterSubmenu(numpadMenu);
+  //enterSubmenu(numpadMenu);
 }
